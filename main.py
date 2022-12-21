@@ -40,7 +40,9 @@ def getPlayerName():
     User inputs the name of the player
     :return: str
     """
-    PLAYER = input("Enter player name: ")
+    FIRST_NAME = input("Enter first name: ")
+    LAST_NAME = input("Enter last name: ")
+    PLAYER = FIRST_NAME + "_" + LAST_NAME
     return PLAYER
 
 def addNewRow(NAME):
@@ -51,29 +53,38 @@ def addNewRow(NAME):
     """
     global CURSOR, CONNECTION
 
-    DATE = str(input("> "))
-    OPPONENT = str(input("> "))
-    MINUTES = int(input("> "))
-    POINTS = int(input("> "))
-    REBOUNDS = int(input("> "))
-    ASSISTS = int(input("> "))
-    STEALS = int(input("> "))
-    BLOCKS = int(input("> "))
-    TURNOVERS = int(input("> "))
-    FG_MADE = int(input("> "))
-    FG_ATTEMPTED = int(input("> "))
-    FG_PER = (FG_MADE / FG_ATTEMPTED) * 100
+    DATE = input("Date of game> ")
+    OPPONENT = input("Opponent> ")
+    MINUTES = int(input("Minutes played> "))
+    POINTS = int(input("Points> "))
+    REBOUNDS = int(input("Rebounds> "))
+    ASSISTS = int(input("Assists> "))
+    STEALS = int(input("Steals> "))
+    BLOCKS = int(input("Blocks> "))
+    TURNOVERS = int(input("Turnovers> "))
+    FG_MADE = int(input("Field goals made> "))
+    FG_ATTEMPTED = int(input("Field goals attempted> "))
+    if FG_ATTEMPTED == 0:
+        FG_PER = 0
+    else:
+        FG_PER = (FG_MADE / FG_ATTEMPTED) * 100
     round(FG_PER, 1)
-    THREE_MADE = int(input("> "))
-    THREE_ATTEMPTED = int(input("> "))
-    THREE_PER = (THREE_MADE / THREE_ATTEMPTED) * 100
+    THREE_MADE = int(input("Threes made> "))
+    THREE_ATTEMPTED = int(input("Threes attempted> "))
+    if THREE_ATTEMPTED == 0:
+        THREE_PER = 0
+    else:
+        THREE_PER = (THREE_MADE / THREE_ATTEMPTED) * 100
     round(THREE_PER, 1)
-    FT_MADE = int(input("> "))
-    FT_ATTEMPTED = int(input("> "))
-    FT_PER = (FT_MADE / FT_ATTEMPTED) * 100
+    FT_MADE = int(input("Free throws made> "))
+    FT_ATTEMPTED = int(input("Free throws attempted> "))
+    if FT_ATTEMPTED == 0:
+        FT_PER = 0
+    else:
+        FT_PER = (FT_MADE / FT_ATTEMPTED) * 100
     round(FT_PER, 1)
-    FOULS = int(input("> "))
-    PLUS_MINUS = input("> ")
+    FOULS = int(input("Fouls> "))
+    PLUS_MINUS = input("+/-> ")
 
     NEW_GAME = [DATE, OPPONENT, MINUTES, POINTS, REBOUNDS, ASSISTS, STEALS, BLOCKS, TURNOVERS, FG_MADE, FG_ATTEMPTED, FG_PER, THREE_MADE, THREE_ATTEMPTED, THREE_PER, FT_MADE, FT_ATTEMPTED, FT_PER, FOULS, PLUS_MINUS]
 
@@ -84,7 +95,6 @@ def addNewRow(NAME):
     CURSOR.execute(f"""
         INSERT INTO
             {NAME} (
-                id,
                 date,
                 opponent,
                 minutes,
@@ -96,18 +106,18 @@ def addNewRow(NAME):
                 turnovers,
                 fg_made,
                 fg_attempted,
-                fg_%,
-                3_point_made,
-                3_point_attempted,
-                3_point_%,
+                fg_per,
+                three_point_made,
+                three_point_attempted,
+                three_point_per,
                 ft_made,
                 ft_attempted,
-                ft_%,
+                ft_per,
                 fouls,
                 plus_minus
             )
         VALUES (
-            ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+            ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
         )
     ;""", NEW_GAME)
 
@@ -138,13 +148,13 @@ def setupTable(NAME):
                 turnovers INTEGER,
                 fg_made INTEGER,
                 fg_attempted INTEGER,
-                fg_% FLOAT,
-                3_point_made INTEGER,
-                3_point_attempted INTEGER,
-                3_point_% FLOAT,
+                fg_per FLOAT,
+                three_point_made INTEGER,
+                three_point_attempted INTEGER,
+                three_point_per FLOAT,
                 ft_made INTEGER,
                 ft_attempted INTEGER,
-                ft_% FLOAT,
+                ft_per FLOAT,
                 fouls INTEGER,
                 plus_minus TEXT
             )
@@ -168,13 +178,29 @@ def getPlayerAverage(NAME):
             {NAME}
     """).fetchall()
 
+    print(STATS)
+
 def getTeamAverage():
     pass
 
 ### OUTPUTS
 
-def displayPlayer():
-    pass
+def displayPlayer(NAME):
+    """
+    Display the table for a player
+    :param NAME: str
+    :return:
+    """
+    global CURSOR, CONNECTION
+
+    STATS = CURSOR.execute(f"""
+            SELECT
+                *
+            FROM
+                {NAME}
+        """).fetchall()
+
+    print(STATS)
 
 def displayTeam():
     pass
@@ -184,17 +210,20 @@ def displayTeam():
 if __name__ == "__main__":
 
     CHOICE = menu()
-
-    if CHOICE == 1:
-        pass
-    elif CHOICE == 2:
-        NAME = getPlayerName()
-        getPlayerAverage(NAME)
-    elif CHOICE == 3:
-        NAME = getPlayerName()
-        setupTable(NAME)
-    elif CHOICE == 4:
-        NAME = getPlayerName()
-        addNewRow(NAME)
-    else:
-        exit()
+    while True:
+        if CHOICE == 1:
+            pass
+        elif CHOICE == 2:
+            NAME = getPlayerName()
+            getPlayerAverage(NAME)
+        elif CHOICE == 3:
+            NAME = getPlayerName()
+            setupTable(NAME)
+        elif CHOICE == 4:
+            NAME = getPlayerName()
+            addNewRow(NAME)
+        elif CHOICE == 5:
+            NAME = getPlayerName()
+            print(NAME)
+        else:
+            exit()
