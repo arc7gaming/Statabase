@@ -55,42 +55,51 @@ def addNewRow(NAME):
 
     DATE = input("Date of game> ")
     OPPONENT = input("Opponent> ")
-    MINUTES = int(input("Minutes played> "))
-    POINTS = int(input("Points> "))
-    REBOUNDS = int(input("Rebounds> "))
-    ASSISTS = int(input("Assists> "))
-    STEALS = int(input("Steals> "))
-    BLOCKS = int(input("Blocks> "))
-    TURNOVERS = int(input("Turnovers> "))
-    FG_MADE = int(input("Field goals made> "))
-    FG_ATTEMPTED = int(input("Field goals attempted> "))
-    if FG_ATTEMPTED == 0:
+    MINUTES = input("Minutes played> ")
+    POINTS = input("Points> ")
+    REBOUNDS = input("Rebounds> ")
+    ASSISTS = input("Assists> ")
+    STEALS = input("Steals> ")
+    BLOCKS = input("Blocks> ")
+    TURNOVERS = input("Turnovers> ")
+    FG_MADE = input("Field goals made> ")
+    if FG_MADE == "":
+        FG_MADE = 0
+    FG_ATTEMPTED = input("Field goals attempted> ")
+    if FG_ATTEMPTED == 0 or '""':
         FG_PER = 0
     else:
         FG_PER = (FG_MADE / FG_ATTEMPTED) * 100
     round(FG_PER, 1)
-    THREE_MADE = int(input("Threes made> "))
-    THREE_ATTEMPTED = int(input("Threes attempted> "))
-    if THREE_ATTEMPTED == 0:
+    THREE_MADE = input("Threes made> ")
+    if THREE_MADE == "":
+        THREE_MADE = 0
+    THREE_ATTEMPTED = input("Threes attempted> ")
+    if THREE_ATTEMPTED == 0 or '""':
         THREE_PER = 0
     else:
         THREE_PER = (THREE_MADE / THREE_ATTEMPTED) * 100
     round(THREE_PER, 1)
-    FT_MADE = int(input("Free throws made> "))
-    FT_ATTEMPTED = int(input("Free throws attempted> "))
-    if FT_ATTEMPTED == 0:
+    FT_MADE = input("Free throws made> ")
+    if FT_MADE == "":
+        FT_MADE = 0
+    FT_ATTEMPTED = input("Free throws attempted> ")
+    if FT_ATTEMPTED == 0 or '""':
         FT_PER = 0
     else:
         FT_PER = (FT_MADE / FT_ATTEMPTED) * 100
     round(FT_PER, 1)
-    FOULS = int(input("Fouls> "))
+    FOULS = input("Fouls> ")
     PLUS_MINUS = input("+/-> ")
 
     NEW_GAME = [DATE, OPPONENT, MINUTES, POINTS, REBOUNDS, ASSISTS, STEALS, BLOCKS, TURNOVERS, FG_MADE, FG_ATTEMPTED, FG_PER, THREE_MADE, THREE_ATTEMPTED, THREE_PER, FT_MADE, FT_ATTEMPTED, FT_PER, FOULS, PLUS_MINUS]
 
     for i in range(len(NEW_GAME)):
-        if NEW_GAME[i] == "":
+        if NEW_GAME[i] == '""':
             NEW_GAME[i] = 0
+            for j in range(len(NEW_GAME)):
+                if NEW_GAME[i][j].isnumeric():
+                    NEW_GAME[i][j] = int(NEW_GAME[i][j])
 
     CURSOR.execute(f"""
         INSERT INTO
@@ -209,8 +218,10 @@ def displayTeam():
 
 if __name__ == "__main__":
 
-    CHOICE = menu()
     while True:
+
+        CHOICE = menu()
+
         if CHOICE == 1:
             pass
         elif CHOICE == 2:
@@ -222,8 +233,5 @@ if __name__ == "__main__":
         elif CHOICE == 4:
             NAME = getPlayerName()
             addNewRow(NAME)
-        elif CHOICE == 5:
-            NAME = getPlayerName()
-            print(NAME)
         else:
             exit()
