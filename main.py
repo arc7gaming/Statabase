@@ -175,10 +175,12 @@ def getPlayerAverage(NAME):
     """
     get the average stats for a player
     :param NAME: str
-    :return:
+    :return: list
     """
 
     global CURSOR, CONNECTION
+
+    from statistics import mean
 
     STATS = CURSOR.execute(f"""
         SELECT
@@ -187,7 +189,16 @@ def getPlayerAverage(NAME):
             {NAME}
     """).fetchall()
 
-    print(STATS)
+    for i in range(len(STATS)):
+        STATS[i] = list(STATS[i])
+
+    for i in range(len(STATS)):
+        STATS[i] = STATS[i].split(",")
+        for j in range(len(STATS)):
+            if STATS[i][j].isnumeric():
+                AVERAGE = mean(STATS[i][j])
+
+    return print(AVERAGE)
 
 def getTeamAverage():
     pass
