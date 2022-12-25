@@ -53,8 +53,8 @@ def addNewRow(NAME):
     """
     global CURSOR, CONNECTION
 
-    DATE = input("Date of game> ")
-    OPPONENT = input("Opponent> ")
+    DATE = input("Date of game(MM/DD)> ")
+    OPPONENT = input("Opponent(XXX)> ")
     MINUTES = input("Minutes played> ")
     POINTS = input("Points> ")
     REBOUNDS = input("Rebounds> ")
@@ -211,7 +211,10 @@ def displayPlayer(NAME):
     :param NAME: str
     :return:
     """
+
     global CURSOR, CONNECTION
+
+    from tabulate import tabulate
 
     STATS = CURSOR.execute(f"""
             SELECT
@@ -220,7 +223,15 @@ def displayPlayer(NAME):
                 {NAME}
         """).fetchall()
 
-    print(STATS)
+    TABLE = STATS
+    HEADER = ['DATE', 'OPP', 'MIN', 'PTS', 'REB', 'AST', 'STL', 'BLK', 'TO', 'FGM', 'FGA', 'FG%', '3PM', '3PA', '3P%', 'FTM', 'FT_A', 'FT%', 'F', '+/-']
+
+    print(tabulate(TABLE, headers=HEADER))
+
+    #for row in TABLE:
+        #for col in row:
+            #print(col, end=" ")
+        #print(TABLE)
 
 def displayTeam():
     pass
@@ -237,7 +248,8 @@ if __name__ == "__main__":
             pass
         elif CHOICE == 2:
             NAME = getPlayerName()
-            getPlayerAverage(NAME)
+            displayPlayer(NAME)
+            #getPlayerAverage(NAME)
         elif CHOICE == 3:
             NAME = getPlayerName()
             setupTable(NAME)
