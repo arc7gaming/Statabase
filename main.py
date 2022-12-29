@@ -45,6 +45,13 @@ def getPlayerName():
     PLAYER = FIRST_NAME + "_" + LAST_NAME
     return PLAYER
 
+def getPlayerNumber():
+    """
+    User inputs the player number
+    :return:
+    """
+    return input("Enter number: ")
+
 def addNewRow(NAME):
     """
     User adds a new row to the player table
@@ -171,37 +178,159 @@ def setupTable(NAME):
 
     CONNECTION.commit()
 
-def getPlayerAverage(NAME):
+def getPlayerAverage(NAME, NUMBER):
     """
     get the average stats for a player
     :param NAME: str
+    :param NUMBER: str
     :return: list
     """
 
     global CURSOR, CONNECTION
 
-    from statistics import mean
-
     STATS = CURSOR.execute(f"""
         SELECT
-            *
+            minutes,
+            points,
+            rebounds,
+            assists,
+            steals,
+            blocks,
+            turnovers,
+            fg_made,
+            fg_attempted,
+            fg_per,
+            three_point_made,
+            three_point_attempted,
+            three_point_per,
+            ft_made,
+            ft_attempted,
+            ft_per,
+            fouls
         FROM
             {NAME}
     """).fetchall()
 
-    for i in range(len(STATS)):
-        STATS[i] = list(STATS[i])
+    import numpy as np
 
-    for i in range(len(STATS)):
-        STATS[i] = STATS[i].split(",")
-        for j in range(len(STATS)):
-            if STATS[i][j].isnumeric():
-                AVERAGE = mean(STATS[i][j])
+    STAT = np.array(STATS)
 
-    return print(AVERAGE)
+    MIN_AVG = STAT[:, 0].mean()
+    PTS_AVG = STAT[:, 1].mean()
+    REB_AVG = STAT[:, 2].mean()
+    AST_AVG = STAT[:, 3].mean()
+    STL_AVG = STAT[:, 4].mean()
+    BLK_AVG = STAT[:, 5].mean()
+    TO_AVG = STAT[:, 6].mean()
+    FGM_AVG = STAT[:, 7].mean()
+    FGA_AVG = STAT[:, 8].mean()
+    FGP_AVG = STAT[:, 9].mean()
+    TPM_AVG = STAT[:, 10].mean()
+    TPA_AVG = STAT[:, 11].mean()
+    TPP_AVG = STAT[:, 12].mean()
+    FTM_AVG = STAT[:, 13].mean()
+    FTA_AVG = STAT[:, 14].mean()
+    FTP_AVG = STAT[:, 15].mean()
+    F_AVG = STAT[:, 16].mean()
 
-def getTeamAverage():
-    pass
+    AVG = [MIN_AVG, PTS_AVG, REB_AVG, AST_AVG, STL_AVG, BLK_AVG, TO_AVG, FGM_AVG, FGA_AVG, FGP_AVG, TPM_AVG, TPA_AVG, TPP_AVG, FTM_AVG, FTA_AVG, FTP_AVG, F_AVG]
+
+    CURSOR.execute(f"""
+            INSERT INTO
+                {NAME} (
+                    date,
+                    opponent,
+                    minutes,
+                    points,
+                    rebounds,
+                    assists,
+                    steals,
+                    blocks,
+                    turnovers,
+                    fg_made,
+                    fg_attempted,
+                    fg_per,
+                    three_point_made,
+                    three_point_attempted,
+                    three_point_per,
+                    ft_made,
+                    ft_attempted,
+                    ft_per,
+                    fouls
+                )
+            VALUES (
+                "AVG", "---", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+            )
+        ;""", AVG)
+
+    CONNECTION.commit()
+
+    CURSOR.execute(f"""
+            INSERT INTO
+                Lillian_Osborne_Basketball (
+                    number,
+                    name,
+                    avg_minutes,
+                    avg_points,
+                    avg_rebounds,
+                    avg_assists,
+                    avg_steals,
+                    avg_blocks,
+                    avg_turnovers,
+                    avg_fg_made,
+                    avg_fg_attempted,
+                    avg_fg_per,
+                    avg_three_point_made,
+                    avg_three_point_attempted,
+                    avg_three_point_per,
+                    avg_ft_made,
+                    avg_ft_attempted,
+                    avg_ft_per,
+                    avg_fouls,
+                )
+            VALUES (
+                {NUMBER}, {NAME}, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+                )
+        ;""", AVG)
+
+    CONNECTION.commit()
+
+def setupTeamTable():
+    """
+    Set up a table for the team stats
+    :return:
+    """
+
+    global CURSOR, CONNECTION
+
+    CURSOR.execute("""
+        CREATE TABLE
+            Lillian_Osborne_Basketball (
+                id INTEGER PRIMARY KEY,
+                number INTEGER NOT NULL,
+                name TEXT NOT NULL,
+                avg_minutes INTEGER,
+                avg_points INTEGER,
+                avg_rebounds INTEGER,
+                avg_assists INTEGER,
+                avg_steals INTEGER,
+                avg_blocks INTEGER,
+                avg_turnovers INTEGER,
+                avg_fg_made INTEGER,
+                avg_fg_attempted INTEGER,
+                avg_fg_per FLOAT,
+                avg_three_point_made INTEGER,
+                avg_three_point_attempted INTEGER,
+                avg_three_point_per FLOAT,
+                avg_ft_made INTEGER,
+                avg_ft_attempted INTEGER,
+                avg_ft_per FLOAT,
+                avg_fouls INTEGER,
+                season_plus_minus TEXT
+                )
+    ;""")
+
+    CONNECTION.commit()
 
 ### OUTPUTS
 
@@ -234,27 +363,50 @@ def displayPlayer(NAME):
         #print(TABLE)
 
 def displayTeam():
-    pass
+    """
+    Display the table for a player
+    :param NAME: str
+    :return:
+    """
+
+    global CURSOR, CONNECTION
+
+    from tabulate import tabulate
+
+    STATS = CURSOR.execute(f"""
+            SELECT
+                *
+            FROM
+                Lillian_Osborne_Basketball
+        """).fetchall()
+
+    TABLE = STATS
+    HEADER = ['NUM', 'NAME', 'MPG', 'PPG', 'RPG', 'APG', 'SPG', 'BPG', 'TPG', 'FGM', 'FGA', 'FG%', '3PM', '3PA', '3P%',
+              'FTM', 'FT_A', 'FT%', 'FPG', '+/-']
+
+    print(tabulate(TABLE, headers=HEADER))
 
 # --- MAIN PROGRAM CODE --- #
 
 if __name__ == "__main__":
 
+    setupTeamTable()
     while True:
 
         CHOICE = menu()
 
         if CHOICE == 1:
-            pass
+            displayTeam()
         elif CHOICE == 2:
             NAME = getPlayerName()
             displayPlayer(NAME)
-            #getPlayerAverage(NAME)
         elif CHOICE == 3:
             NAME = getPlayerName()
             setupTable(NAME)
         elif CHOICE == 4:
             NAME = getPlayerName()
+            NUMBER = getPlayerNumber()
             addNewRow(NAME)
+            getPlayerAverage(NAME, NUMBER)
         else:
             exit()
