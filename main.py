@@ -7,14 +7,23 @@ date-created: 2022-12-16
 """
 
 import sqlite3
+import pathlib
 
 # --- VARIABLES --- #
 FILENAME = "stats.db"
 
 # TEST if the FILENAME already exists
 
+FIRST_RUN = True
+
+if (pathlib.Path.cwd() / FILENAME).exists():
+    FIRST_RUN = False
+
 CONNECTION = sqlite3.connect(FILENAME)
 CURSOR = CONNECTION.cursor()
+
+PLAYERS = []
+NUMBERS = []
 
 # --- SUBROUTINES --- #
 
@@ -43,14 +52,37 @@ def getPlayerName():
     FIRST_NAME = input("Enter first name: ")
     LAST_NAME = input("Enter last name: ")
     PLAYER = FIRST_NAME + "_" + LAST_NAME
+    PLAYERS.append(PLAYER)
     return PLAYER
 
-def getPlayerNumber():
+def getPlayerID():
     """
-    User inputs the player number
-    :return:
+    User enters the id to search for a player
+    :return: str
     """
-    return input("Enter number: ")
+
+    global CURSOR
+
+    PLAYERS = CURSOR.execute("""
+        SELECT 
+            name
+        FROM
+            sqlite_schema
+        WHERE
+            type = 'table'
+    ;""").fetchall()
+
+    ALLPLAYERS = list(sum(PLAYERS, ()))
+
+    for i in range(len(ALLPLAYERS)):
+        print(f"{i + 1}: {ALLPLAYERS[i]}")
+
+    ROW_INDEX = input("> ")
+    ROW_INDEX = int(ROW_INDEX) - 1
+
+    PLAYER_ID = ALLPLAYERS[ROW_INDEX]
+
+    return str(PLAYER_ID)
 
 def addNewRow(NAME):
     """
@@ -97,9 +129,8 @@ def addNewRow(NAME):
         FT_PER = (FT_MADE / FT_ATTEMPTED) * 100
     round(FT_PER, 1)
     FOULS = input("Fouls> ")
-    PLUS_MINUS = input("+/-> ")
 
-    NEW_GAME = [DATE, OPPONENT, MINUTES, POINTS, REBOUNDS, ASSISTS, STEALS, BLOCKS, TURNOVERS, FG_MADE, FG_ATTEMPTED, FG_PER, THREE_MADE, THREE_ATTEMPTED, THREE_PER, FT_MADE, FT_ATTEMPTED, FT_PER, FOULS, PLUS_MINUS]
+    NEW_GAME = [DATE, OPPONENT, MINUTES, POINTS, REBOUNDS, ASSISTS, STEALS, BLOCKS, TURNOVERS, FG_MADE, FG_ATTEMPTED, FG_PER, THREE_MADE, THREE_ATTEMPTED, THREE_PER, FT_MADE, FT_ATTEMPTED, FT_PER, FOULS]
 
     for i in range(len(NEW_GAME)):
         if NEW_GAME[i] == '""':
@@ -129,11 +160,10 @@ def addNewRow(NAME):
                 ft_made,
                 ft_attempted,
                 ft_per,
-                fouls,
-                plus_minus
+                fouls
             )
         VALUES (
-            ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+            ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
         )
     ;""", NEW_GAME)
 
@@ -171,14 +201,13 @@ def setupTable(NAME):
                 ft_made INTEGER,
                 ft_attempted INTEGER,
                 ft_per FLOAT,
-                fouls INTEGER,
-                plus_minus TEXT
+                fouls INTEGER
             )
     ;""")
 
     CONNECTION.commit()
 
-def getPlayerAverage(NAME, NUMBER):
+def getPlayerAverage(NAME):
     """
     get the average stats for a player
     :param NAME: str
@@ -235,63 +264,83 @@ def getPlayerAverage(NAME, NUMBER):
 
     AVG = [MIN_AVG, PTS_AVG, REB_AVG, AST_AVG, STL_AVG, BLK_AVG, TO_AVG, FGM_AVG, FGA_AVG, FGP_AVG, TPM_AVG, TPA_AVG, TPP_AVG, FTM_AVG, FTA_AVG, FTP_AVG, F_AVG]
 
+    return AVG
+
+def addAverage(NAME, AVG):
+    """
+    Adds the average into the player table
+    :param NAME: str
+    :param AVG: list
+    :return:
+    """
+    global CURSOR, CONNECTION
+
     CURSOR.execute(f"""
-            INSERT INTO
-                {NAME} (
-                    date,
-                    opponent,
-                    minutes,
-                    points,
-                    rebounds,
-                    assists,
-                    steals,
-                    blocks,
-                    turnovers,
-                    fg_made,
-                    fg_attempted,
-                    fg_per,
-                    three_point_made,
-                    three_point_attempted,
-                    three_point_per,
-                    ft_made,
-                    ft_attempted,
-                    ft_per,
-                    fouls
+                INSERT INTO
+                    {NAME} (
+                        date,
+                        opponent,
+                        minutes,
+                        points,
+                        rebounds,
+                        assists,
+                        steals,
+                        blocks,
+                        turnovers,
+                        fg_made,
+                        fg_attempted,
+                        fg_per,
+                        three_point_made,
+                        three_point_attempted,
+                        three_point_per,
+                        ft_made,
+                        ft_attempted,
+                        ft_per,
+                        fouls
+                    )
+                VALUES (
+                    "AVG", "---", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
                 )
-            VALUES (
-                "AVG", "---", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
-            )
-        ;""", AVG)
+            ;""", AVG)
 
     CONNECTION.commit()
 
+def updateAverage(NAME, AVG):
+    """
+    Updates the average row
+    :param NAME: str
+    :param AVG: list
+    :return:
+    """
+
+    global CURSOR, CONNECTION
+
     CURSOR.execute(f"""
-            INSERT INTO
-                Lillian_Osborne_Basketball (
-                    number,
-                    name,
-                    avg_minutes,
-                    avg_points,
-                    avg_rebounds,
-                    avg_assists,
-                    avg_steals,
-                    avg_blocks,
-                    avg_turnovers,
-                    avg_fg_made,
-                    avg_fg_attempted,
-                    avg_fg_per,
-                    avg_three_point_made,
-                    avg_three_point_attempted,
-                    avg_three_point_per,
-                    avg_ft_made,
-                    avg_ft_attempted,
-                    avg_ft_per,
-                    avg_fouls,
-                )
-            VALUES (
-                {NUMBER}, {NAME}, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
-                )
-        ;""", AVG)
+        UPDATE
+            {NAME}
+        SET 
+            date = ?
+            opponent = ?
+            minutes = ?
+            points = ?
+            rebounds = ?
+            assists = ?
+            steals = ?
+            blocks = ?
+            turnovers = ?
+            fg_made = ?
+            fg_attempted = ?
+            fg_per = ?
+            three_point_made = ?
+            three_point_attempted = ?
+            three_point_per = ?
+            ft_made = ?
+            ft_attempted = ?
+            ft_per = ?
+            fouls = ?
+        WHERE
+            id = ?
+    ;""", AVG)
 
     CONNECTION.commit()
 
@@ -307,7 +356,6 @@ def setupTeamTable():
         CREATE TABLE
             Lillian_Osborne_Basketball (
                 id INTEGER PRIMARY KEY,
-                number INTEGER NOT NULL,
                 name TEXT NOT NULL,
                 avg_minutes INTEGER,
                 avg_points INTEGER,
@@ -325,10 +373,48 @@ def setupTeamTable():
                 avg_ft_made INTEGER,
                 avg_ft_attempted INTEGER,
                 avg_ft_per FLOAT,
-                avg_fouls INTEGER,
-                season_plus_minus TEXT
+                avg_fouls INTEGER
                 )
     ;""")
+
+    CONNECTION.commit()
+
+def updateTeam(NAME, AVG):
+    """
+    Add averages to team table
+    :param NAME: str
+    :param AVG: list
+    :return:
+    """
+
+    global CURSOR, CONNECTION
+
+    CURSOR.execute(f"""
+            INSERT INTO
+                Lillian_Osborne_Basketball (
+                    name,
+                    avg_minutes,
+                    avg_points,
+                    avg_rebounds,
+                    avg_assists,
+                    avg_steals,
+                    avg_blocks,
+                    avg_turnovers,
+                    avg_fg_made,
+                    avg_fg_attempted,
+                    avg_fg_per,
+                    avg_three_point_made,
+                    avg_three_point_attempted,
+                    avg_three_point_per,
+                    avg_ft_made,
+                    avg_ft_attempted,
+                    avg_ft_per,
+                    avg_fouls
+                )
+            VALUES (
+                {NAME}, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+            )
+        ;""", AVG)
 
     CONNECTION.commit()
 
@@ -353,7 +439,7 @@ def displayPlayer(NAME):
         """).fetchall()
 
     TABLE = STATS
-    HEADER = ['DATE', 'OPP', 'MIN', 'PTS', 'REB', 'AST', 'STL', 'BLK', 'TO', 'FGM', 'FGA', 'FG%', '3PM', '3PA', '3P%', 'FTM', 'FT_A', 'FT%', 'F', '+/-']
+    HEADER = ['DATE', 'OPP', 'MIN', 'PTS', 'REB', 'AST', 'STL', 'BLK', 'TO', 'FGM', 'FGA', 'FG%', '3PM', '3PA', '3P%', 'FTM', 'FT_A', 'FT%', 'F']
 
     print(tabulate(TABLE, headers=HEADER))
 
@@ -382,7 +468,7 @@ def displayTeam():
 
     TABLE = STATS
     HEADER = ['NUM', 'NAME', 'MPG', 'PPG', 'RPG', 'APG', 'SPG', 'BPG', 'TPG', 'FGM', 'FGA', 'FG%', '3PM', '3PA', '3P%',
-              'FTM', 'FT_A', 'FT%', 'FPG', '+/-']
+              'FTM', 'FT_A', 'FT%', 'FPG']
 
     print(tabulate(TABLE, headers=HEADER))
 
@@ -390,23 +476,25 @@ def displayTeam():
 
 if __name__ == "__main__":
 
-    setupTeamTable()
+    if FIRST_RUN:
+        setupTeamTable()
     while True:
-
         CHOICE = menu()
 
         if CHOICE == 1:
             displayTeam()
         elif CHOICE == 2:
-            NAME = getPlayerName()
+            NAME = getPlayerID()
             displayPlayer(NAME)
+            AVG = getPlayerAverage(NAME)
+            updateTeam(NAME, AVG)
         elif CHOICE == 3:
             NAME = getPlayerName()
             setupTable(NAME)
+            addAverage(NAME)
         elif CHOICE == 4:
-            NAME = getPlayerName()
-            NUMBER = getPlayerNumber()
+            NAME = getPlayerID()
             addNewRow(NAME)
-            getPlayerAverage(NAME, NUMBER)
+            updateAverage(NAME)
         else:
             exit()
