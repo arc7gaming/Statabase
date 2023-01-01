@@ -72,7 +72,7 @@ def getPlayerID():
             type = 'table'
     ;""").fetchall()
 
-    ALLPLAYERS = list(sum(PLAYERS, ()))
+    ALLPLAYERS = list(sum(PLAYERS[1:], ()))
 
     for i in range(len(ALLPLAYERS)):
         print(f"{i + 1}: {ALLPLAYERS[i]}")
@@ -266,7 +266,7 @@ def getPlayerAverage(NAME):
 
     return AVG
 
-def addAverage(NAME, AVG):
+def addAverage(NAME):
     """
     Adds the average into the player table
     :param NAME: str
@@ -299,9 +299,9 @@ def addAverage(NAME, AVG):
                         fouls
                     )
                 VALUES (
-                    "AVG", "---", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+                    "AVG", "---", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
                 )
-            ;""", AVG)
+            ;""")
 
     CONNECTION.commit()
 
@@ -319,8 +319,6 @@ def updateAverage(NAME, AVG):
         UPDATE
             {NAME}
         SET 
-            date = ?
-            opponent = ?
             minutes = ?
             points = ?
             rebounds = ?
@@ -339,7 +337,7 @@ def updateAverage(NAME, AVG):
             ft_per = ?
             fouls = ?
         WHERE
-            id = ?
+            date = "AVG"
     ;""", AVG)
 
     CONNECTION.commit()
@@ -379,7 +377,7 @@ def setupTeamTable():
 
     CONNECTION.commit()
 
-def updateTeam(NAME, AVG):
+def addtoTeam(NAME, AVG):
     """
     Add averages to team table
     :param NAME: str
@@ -412,7 +410,7 @@ def updateTeam(NAME, AVG):
                     avg_fouls
                 )
             VALUES (
-                {NAME}, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+                {NAME}, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
             )
         ;""", AVG)
 
@@ -486,15 +484,16 @@ if __name__ == "__main__":
         elif CHOICE == 2:
             NAME = getPlayerID()
             displayPlayer(NAME)
-            AVG = getPlayerAverage(NAME)
-            updateTeam(NAME, AVG)
+            getPlayerAverage(NAME)
         elif CHOICE == 3:
             NAME = getPlayerName()
             setupTable(NAME)
             addAverage(NAME)
+            addtoTeam(NAME)
         elif CHOICE == 4:
             NAME = getPlayerID()
             addNewRow(NAME)
-            updateAverage(NAME)
+            AVG = getPlayerAverage(NAME)
+            updateAverage(NAME, AVG)
         else:
             exit()
