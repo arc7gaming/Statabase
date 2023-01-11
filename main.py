@@ -319,22 +319,22 @@ def updateAverage(NAME, AVG):
         UPDATE
             {NAME}
         SET 
-            minutes = ?
-            points = ?
-            rebounds = ?
-            assists = ?
-            steals = ?
-            blocks = ?
-            turnovers = ?
-            fg_made = ?
-            fg_attempted = ?
-            fg_per = ?
-            three_point_made = ?
-            three_point_attempted = ?
-            three_point_per = ?
-            ft_made = ?
-            ft_attempted = ?
-            ft_per = ?
+            minutes = ?,
+            points = ?,
+            rebounds = ?,
+            assists = ?,
+            steals = ?,
+            blocks = ?,
+            turnovers = ?,
+            fg_made = ?,
+            fg_attempted = ?,
+            fg_per = ?,
+            three_point_made = ?,
+            three_point_attempted = ?,
+            three_point_per = ?,
+            ft_made = ?,
+            ft_attempted = ?,
+            ft_per = ?,
             fouls = ?
         WHERE
             date = "AVG"
@@ -377,7 +377,7 @@ def setupTeamTable():
 
     CONNECTION.commit()
 
-def addtoTeam(NAME, AVG):
+def addtoTeam(NAME):
     """
     Add averages to team table
     :param NAME: str
@@ -412,7 +412,7 @@ def addtoTeam(NAME, AVG):
             VALUES (
                 {NAME}, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
             )
-        ;""", AVG)
+        ;""")
 
     CONNECTION.commit()
 
@@ -489,11 +489,11 @@ if __name__ == "__main__":
             NAME = getPlayerName()
             setupTable(NAME)
             addAverage(NAME)
-            addtoTeam(NAME)
         elif CHOICE == 4:
             NAME = getPlayerID()
             addNewRow(NAME)
             AVG = getPlayerAverage(NAME)
             updateAverage(NAME, AVG)
+            addtoTeam(NAME)
         else:
             exit()
