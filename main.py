@@ -84,6 +84,33 @@ def getPlayerID():
 
     return str(PLAYER_ID)
 
+def getRowID(NAME):
+    """
+    User enters the id to search for a player
+    :return: str
+    """
+
+    global CURSOR
+
+    ROWS = CURSOR.execute(f"""
+        SELECT 
+            id,
+            date,
+            opponent
+        FROM
+            {NAME}
+    ;""").fetchall()
+
+    ALLROWS = list(ROWS)
+
+    for i in range(len(ALLROWS)):
+        print(f"{i + 1}: {ALLROWS[i]}")
+
+    ROW_INDEX = input("> ")
+    ROW_INDEX = int(ROW_INDEX) - 1
+
+    return str(ROW_INDEX)
+
 def addNewRow(NAME):
     """
     User adds a new row to the player table
@@ -206,6 +233,9 @@ def setupTable(NAME):
     ;""")
 
     CONNECTION.commit()
+
+    print(f"{NAME} added to database!")
+
 
 def getPlayerAverage(NAME):
     """
@@ -416,6 +446,41 @@ def addtoTeam(NAME, AVG):
 
     CONNECTION.commit()
 
+def deleteRow(NAME, ROW):
+    """
+    delete a row from a table
+    :param NAME: str
+    :param ROW: int
+    :return:
+    """
+
+    global CURSOR, CONNECTION
+
+    CURSOR.execute(f"""
+            DELETE FROM
+                {NAME}
+            WHERE 
+                id = {ROW}
+    ;""")
+
+    print("Row successfully deleted!")
+
+def deleteTable(NAME):
+    """
+    Delete a table from the database
+    :param NAME: str
+    :return:
+    """
+
+    global CURSOR, CONNECTION
+
+    CURSOR.execute(f"""
+        DROP TABLE
+            {NAME}
+    ;""")
+
+    print(f"{NAME} successfully deleted!")
+
 ### OUTPUTS
 
 def displayPlayer(NAME):
@@ -476,6 +541,9 @@ if __name__ == "__main__":
 
     if FIRST_RUN:
         setupTeamTable()
+
+    print("Welcome to the statabase interactive platform")
+
     while True:
         CHOICE = menu()
 
@@ -484,16 +552,33 @@ if __name__ == "__main__":
         elif CHOICE == 2:
             NAME = getPlayerID()
             displayPlayer(NAME)
-            getPlayerAverage(NAME)
+            #getPlayerAverage(NAME)
         elif CHOICE == 3:
             NAME = getPlayerName()
             setupTable(NAME)
-            addAverage(NAME)
-            addtoTeam(NAME)
+            #addAverage(NAME)
+            #addtoTeam(NAME)
         elif CHOICE == 4:
-            NAME = getPlayerID()
-            addNewRow(NAME)
-            AVG = getPlayerAverage(NAME)
-            updateAverage(NAME, AVG)
+            print("""
+1. Add new game
+2. Delete row
+3. Delete player
+4. Exit
+            """)
+            SUBMENU = int(input("> "))
+            if SUBMENU == 1:
+                NAME = getPlayerID()
+                addNewRow(NAME)
+                #AVG = getPlayerAverage(NAME)
+                #updateAverage(NAME, AVG)
+            elif SUBMENU == 2:
+                NAME = getPlayerID()
+                deleteTable(NAME)
+            elif SUBMENU == 3:
+                NAME = getPlayerID()
+                ROW = getRowID(NAME)
+                deleteRow(NAME, ROW)
+            else:
+                continue
         else:
             exit()
