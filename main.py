@@ -78,10 +78,16 @@ def getPlayerID():
         print(f"{i + 1}: {ALLPLAYERS[i]}")
 
     ROW_INDEX = input("> ")
+
+    if ROW_INDEX == "" or 0:
+        ROW_INDEX = input("Please choose a valid option> ")
+    elif ROW_INDEX.isnumeric() is False:
+        ROW_INDEX = input("Please choose a valid option> ")
+    elif int(ROW_INDEX) > len(ALLPLAYERS):
+        ROW_INDEX = input("Please choose a valid option> ")
     ROW_INDEX = int(ROW_INDEX) - 1
 
     PLAYER_ID = ALLPLAYERS[ROW_INDEX]
-
     return str(PLAYER_ID)
 
 def getRowID(NAME):
@@ -122,40 +128,84 @@ def addNewRow(NAME):
     DATE = input("Date of game(MM/DD)> ")
     OPPONENT = input("Opponent(XXX)> ")
     MINUTES = input("Minutes played> ")
+    if MINUTES == "":
+        MINUTES = 0
+    elif MINUTES.isnumeric() is False:
+        MINUTES = input("Please enter a number> ")
     POINTS = input("Points> ")
+    if POINTS == "":
+        POINTS = 0
+    elif POINTS.isnumeric() is False:
+        POINTS = input("Please enter a number> ")
     REBOUNDS = input("Rebounds> ")
+    if REBOUNDS == "":
+        REBOUNDS = 0
+    elif REBOUNDS.isnumeric() is False:
+        REBOUNDS = input("Please enter a number> ")
     ASSISTS = input("Assists> ")
+    if ASSISTS == "":
+        ASSISTS = 0
+    elif ASSISTS.isnumeric() is False:
+        ASSISTS = input("Please enter a number> ")
     STEALS = input("Steals> ")
+    if STEALS == "":
+        STEALS = 0
+    elif STEALS.isnumeric() is False:
+        STEALS = input("Please enter a number> ")
     BLOCKS = input("Blocks> ")
+    if BLOCKS == "":
+        BLOCKS = 0
+    elif BLOCKS.isnumeric() is False:
+        BLOCKS = input("Please enter a number> ")
     TURNOVERS = input("Turnovers> ")
+    if TURNOVERS == "":
+        TURNOVERS = 0
+    elif TURNOVERS.isnumeric() is False:
+        TURNOVERS = input("Please enter a number> ")
     FG_MADE = input("Field goals made> ")
     if FG_MADE == "":
         FG_MADE = 0
+    elif FG_MADE.isnumeric() is False:
+        FG_MADE = input("Please enter a number> ")
     FG_ATTEMPTED = input("Field goals attempted> ")
     if FG_ATTEMPTED == 0 or '""':
         FG_PER = 0
+    elif FG_ATTEMPTED.isnumeric() is False:
+        FG_ATTEMPTED = input("Please enter a number> ")
     else:
         FG_PER = (FG_MADE / FG_ATTEMPTED) * 100
     round(FG_PER, 1)
     THREE_MADE = input("Threes made> ")
     if THREE_MADE == "":
         THREE_MADE = 0
+    elif THREE_MADE.isnumeric() is False:
+        THREE_MADE = input("Please enter a number> ")
     THREE_ATTEMPTED = input("Threes attempted> ")
     if THREE_ATTEMPTED == 0 or '""':
         THREE_PER = 0
+    elif THREE_ATTEMPTED.isnumeric() is False:
+        THREE_ATTEMPTED = input("Please enter a number> ")
     else:
         THREE_PER = (THREE_MADE / THREE_ATTEMPTED) * 100
     round(THREE_PER, 1)
     FT_MADE = input("Free throws made> ")
     if FT_MADE == "":
         FT_MADE = 0
+    elif FT_MADE.isnumeric() is False:
+        FT_MADE = input("Please enter a number> ")
     FT_ATTEMPTED = input("Free throws attempted> ")
     if FT_ATTEMPTED == 0 or '""':
         FT_PER = 0
+    elif FT_ATTEMPTED.isnumeric() is False:
+        FT_ATTEMPTED = input("Please enter a number> ")
     else:
         FT_PER = (FT_MADE / FT_ATTEMPTED) * 100
     round(FT_PER, 1)
     FOULS = input("Fouls> ")
+    if FOULS == "":
+        FOULS = 0
+    elif FOULS.isnumeric() is False:
+        FOULS = input("Please enter a number> ")
 
     NEW_GAME = [DATE, OPPONENT, MINUTES, POINTS, REBOUNDS, ASSISTS, STEALS, BLOCKS, TURNOVERS, FG_MADE, FG_ATTEMPTED, FG_PER, THREE_MADE, THREE_ATTEMPTED, THREE_PER, FT_MADE, FT_ATTEMPTED, FT_PER, FOULS]
 
@@ -573,11 +623,11 @@ if __name__ == "__main__":
                 #updateAverage(NAME, AVG)
             elif SUBMENU == 2:
                 NAME = getPlayerID()
-                deleteTable(NAME)
-            elif SUBMENU == 3:
-                NAME = getPlayerID()
                 ROW = getRowID(NAME)
                 deleteRow(NAME, ROW)
+            elif SUBMENU == 3:
+                NAME = getPlayerID()
+                deleteTable(NAME)
             else:
                 continue
         else:
