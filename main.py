@@ -25,6 +25,7 @@ CURSOR = CONNECTION.cursor()
 PLAYERS = []
 NUMBERS = []
 
+
 # --- SUBROUTINES --- #
 
 ### INPUTS
@@ -44,6 +45,7 @@ def menu():
     CHOICE = input("> ")
     return int(CHOICE)
 
+
 def getPlayerName():
     """
     User inputs the name of the player
@@ -54,6 +56,7 @@ def getPlayerName():
     PLAYER = FIRST_NAME + "_" + LAST_NAME
     PLAYERS.append(PLAYER)
     return PLAYER
+
 
 def getPlayerID():
     """
@@ -90,6 +93,7 @@ def getPlayerID():
     PLAYER_ID = ALLPLAYERS[ROW_INDEX]
     return str(PLAYER_ID)
 
+
 def getRowID(NAME):
     """
     User enters the id to search for a player
@@ -116,6 +120,7 @@ def getRowID(NAME):
     ROW_INDEX = int(ROW_INDEX) - 1
 
     return str(ROW_INDEX)
+
 
 def addNewRow(NAME):
     """
@@ -207,7 +212,8 @@ def addNewRow(NAME):
     elif FOULS.isnumeric() is False:
         FOULS = input("Please enter a number> ")
 
-    NEW_GAME = [DATE, OPPONENT, MINUTES, POINTS, REBOUNDS, ASSISTS, STEALS, BLOCKS, TURNOVERS, FG_MADE, FG_ATTEMPTED, FG_PER, THREE_MADE, THREE_ATTEMPTED, THREE_PER, FT_MADE, FT_ATTEMPTED, FT_PER, FOULS]
+    NEW_GAME = [DATE, OPPONENT, MINUTES, POINTS, REBOUNDS, ASSISTS, STEALS, BLOCKS, TURNOVERS, FG_MADE, FG_ATTEMPTED,
+                FG_PER, THREE_MADE, THREE_ATTEMPTED, THREE_PER, FT_MADE, FT_ATTEMPTED, FT_PER, FOULS]
 
     for i in range(len(NEW_GAME)):
         if NEW_GAME[i] == '""':
@@ -245,6 +251,7 @@ def addNewRow(NAME):
     ;""", NEW_GAME)
 
     CONNECTION.commit()
+
 
 ### PROCESSES
 
@@ -324,27 +331,29 @@ def getPlayerAverage(NAME):
 
     STAT = np.array(STATS)
 
-    MIN_AVG = STAT[:, 0].mean()
-    PTS_AVG = STAT[:, 1].mean()
-    REB_AVG = STAT[:, 2].mean()
-    AST_AVG = STAT[:, 3].mean()
-    STL_AVG = STAT[:, 4].mean()
-    BLK_AVG = STAT[:, 5].mean()
-    TO_AVG = STAT[:, 6].mean()
-    FGM_AVG = STAT[:, 7].mean()
-    FGA_AVG = STAT[:, 8].mean()
-    FGP_AVG = STAT[:, 9].mean()
-    TPM_AVG = STAT[:, 10].mean()
-    TPA_AVG = STAT[:, 11].mean()
-    TPP_AVG = STAT[:, 12].mean()
-    FTM_AVG = STAT[:, 13].mean()
-    FTA_AVG = STAT[:, 14].mean()
-    FTP_AVG = STAT[:, 15].mean()
-    F_AVG = STAT[:, 16].mean()
+    MIN_AVG = STAT[1:, 0].mean()
+    PTS_AVG = STAT[1:, 1].mean()
+    REB_AVG = STAT[1:, 2].mean()
+    AST_AVG = STAT[1:, 3].mean()
+    STL_AVG = STAT[1:, 4].mean()
+    BLK_AVG = STAT[1:, 5].mean()
+    TO_AVG = STAT[1:, 6].mean()
+    FGM_AVG = STAT[1:, 7].mean()
+    FGA_AVG = STAT[1:, 8].mean()
+    FGP_AVG = STAT[1:, 9].mean()
+    TPM_AVG = STAT[1:, 10].mean()
+    TPA_AVG = STAT[1:, 11].mean()
+    TPP_AVG = STAT[1:, 12].mean()
+    FTM_AVG = STAT[1:, 13].mean()
+    FTA_AVG = STAT[1:, 14].mean()
+    FTP_AVG = STAT[1:, 15].mean()
+    F_AVG = STAT[1:, 16].mean()
 
-    AVG = [MIN_AVG, PTS_AVG, REB_AVG, AST_AVG, STL_AVG, BLK_AVG, TO_AVG, FGM_AVG, FGA_AVG, FGP_AVG, TPM_AVG, TPA_AVG, TPP_AVG, FTM_AVG, FTA_AVG, FTP_AVG, F_AVG]
+    AVG = [MIN_AVG, PTS_AVG, REB_AVG, AST_AVG, STL_AVG, BLK_AVG, TO_AVG, FGM_AVG, FGA_AVG, FGP_AVG, TPM_AVG, TPA_AVG,
+           TPP_AVG, FTM_AVG, FTA_AVG, FTP_AVG, F_AVG]
 
     return AVG
+
 
 def addAverage(NAME):
     """
@@ -385,6 +394,7 @@ def addAverage(NAME):
 
     CONNECTION.commit()
 
+
 def updateAverage(NAME, AVG):
     """
     Updates the average row
@@ -399,28 +409,29 @@ def updateAverage(NAME, AVG):
         UPDATE
             {NAME}
         SET 
-            minutes = ?
-            points = ?
-            rebounds = ?
-            assists = ?
-            steals = ?
-            blocks = ?
-            turnovers = ?
-            fg_made = ?
-            fg_attempted = ?
-            fg_per = ?
-            three_point_made = ?
-            three_point_attempted = ?
-            three_point_per = ?
-            ft_made = ?
-            ft_attempted = ?
-            ft_per = ?
+            minutes = ?,
+            points = ?,
+            rebounds = ?,
+            assists = ?,
+            steals = ?,
+            blocks = ?,
+            turnovers = ?,
+            fg_made = ?,
+            fg_attempted = ?,
+            fg_per = ?,
+            three_point_made = ?,
+            three_point_attempted = ?,
+            three_point_per = ?,
+            ft_made = ?,
+            ft_attempted = ?,
+            ft_per = ?,
             fouls = ?
         WHERE
             date = "AVG"
     ;""", AVG)
 
     CONNECTION.commit()
+
 
 def setupTeamTable():
     """
@@ -456,6 +467,7 @@ def setupTeamTable():
     ;""")
 
     CONNECTION.commit()
+
 
 def addtoTeam(NAME):
     """
@@ -496,6 +508,7 @@ def addtoTeam(NAME):
 
     CONNECTION.commit()
 
+
 def deleteRow(NAME, ROW):
     """
     delete a row from a table
@@ -515,6 +528,7 @@ def deleteRow(NAME, ROW):
 
     print("Row successfully deleted!")
 
+
 def deleteTable(NAME):
     """
     Delete a table from the database
@@ -530,6 +544,7 @@ def deleteTable(NAME):
     ;""")
 
     print(f"{NAME} successfully deleted!")
+
 
 ### OUTPUTS
 
@@ -552,14 +567,16 @@ def displayPlayer(NAME):
         """).fetchall()
 
     TABLE = STATS
-    HEADER = ['DATE', 'OPP', 'MIN', 'PTS', 'REB', 'AST', 'STL', 'BLK', 'TO', 'FGM', 'FGA', 'FG%', '3PM', '3PA', '3P%', 'FTM', 'FT_A', 'FT%', 'F']
+    HEADER = ['DATE', 'OPP', 'MIN', 'PTS', 'REB', 'AST', 'STL', 'BLK', 'TO', 'FGM', 'FGA', 'FG%', '3PM', '3PA', '3P%',
+              'FTM', 'FT_A', 'FT%', 'F']
 
     print(tabulate(TABLE, headers=HEADER))
 
-    #for row in TABLE:
-        #for col in row:
-            #print(col, end=" ")
-        #print(TABLE)
+    # for row in TABLE:
+    # for col in row:
+    # print(col, end=" ")
+    # print(TABLE)
+
 
 def displayTeam():
     """
@@ -580,10 +597,11 @@ def displayTeam():
         """).fetchall()
 
     TABLE = STATS
-    HEADER = ['NUM', 'NAME', 'MPG', 'PPG', 'RPG', 'APG', 'SPG', 'BPG', 'TPG', 'FGM', 'FGA', 'FG%', '3PM', '3PA', '3P%',
+    HEADER = ['NAME', 'MPG', 'PPG', 'RPG', 'APG', 'SPG', 'BPG', 'TPG', 'FGM', 'FGA', 'FG%', '3PM', '3PA', '3P%',
               'FTM', 'FT_A', 'FT%', 'FPG']
 
     print(tabulate(TABLE, headers=HEADER))
+
 
 def displayList():
     """
@@ -607,6 +625,7 @@ def displayList():
     for i in range(len(ALLPLAYERS)):
         print(f"{i + 1}: {ALLPLAYERS[i]}")
 
+
 # --- MAIN PROGRAM CODE --- #
 
 if __name__ == "__main__":
@@ -624,12 +643,12 @@ if __name__ == "__main__":
         elif CHOICE == 2:
             NAME = getPlayerID()
             displayPlayer(NAME)
-            #getPlayerAverage(NAME)
+            getPlayerAverage(NAME)
         elif CHOICE == 3:
             displayList()
             NAME = getPlayerName()
             setupTable(NAME)
-            #addAverage(NAME)
+            addAverage(NAME)
             #addtoTeam(NAME)
         elif CHOICE == 4:
             print("""
@@ -643,7 +662,7 @@ if __name__ == "__main__":
                 NAME = getPlayerID()
                 addNewRow(NAME)
                 AVG = getPlayerAverage(NAME)
-                #updateAverage(NAME, AVG)
+                updateAverage(NAME, AVG)
             elif SUBMENU == 2:
                 NAME = getPlayerID()
                 ROW = getRowID(NAME)
