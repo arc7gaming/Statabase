@@ -457,7 +457,7 @@ def setupTeamTable():
 
     CONNECTION.commit()
 
-def addtoTeam(NAME, AVG):
+def addtoTeam(NAME):
     """
     Add averages to team table
     :param NAME: str
@@ -492,7 +492,7 @@ def addtoTeam(NAME, AVG):
             VALUES (
                 {NAME}, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
             )
-        ;""", AVG)
+        ;""")
 
     CONNECTION.commit()
 
@@ -585,6 +585,28 @@ def displayTeam():
 
     print(tabulate(TABLE, headers=HEADER))
 
+def displayList():
+    """
+    Display the list of the players
+    :return:
+    """
+
+    global CURSOR
+
+    PLAYERS = CURSOR.execute("""
+            SELECT 
+                name
+            FROM
+                sqlite_schema
+            WHERE
+                type = 'table'
+        ;""").fetchall()
+
+    ALLPLAYERS = list(sum(PLAYERS[1:], ()))
+
+    for i in range(len(ALLPLAYERS)):
+        print(f"{i + 1}: {ALLPLAYERS[i]}")
+
 # --- MAIN PROGRAM CODE --- #
 
 if __name__ == "__main__":
@@ -604,6 +626,7 @@ if __name__ == "__main__":
             displayPlayer(NAME)
             #getPlayerAverage(NAME)
         elif CHOICE == 3:
+            displayList()
             NAME = getPlayerName()
             setupTable(NAME)
             #addAverage(NAME)
@@ -619,7 +642,7 @@ if __name__ == "__main__":
             if SUBMENU == 1:
                 NAME = getPlayerID()
                 addNewRow(NAME)
-                #AVG = getPlayerAverage(NAME)
+                AVG = getPlayerAverage(NAME)
                 #updateAverage(NAME, AVG)
             elif SUBMENU == 2:
                 NAME = getPlayerID()
