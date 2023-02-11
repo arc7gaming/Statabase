@@ -23,8 +23,6 @@ CONNECTION = sqlite3.connect(FILENAME)
 CURSOR = CONNECTION.cursor()
 
 PLAYERS = []
-NUMBERS = []
-
 
 # --- SUBROUTINES --- #
 
@@ -137,80 +135,100 @@ def addNewRow(NAME):
         MINUTES = 0
     elif MINUTES.isnumeric() is False:
         MINUTES = input("Please enter a number> ")
+    int(MINUTES)
     POINTS = input("Points> ")
     if POINTS == "":
         POINTS = 0
     elif POINTS.isnumeric() is False:
         POINTS = input("Please enter a number> ")
+    int(POINTS)
     REBOUNDS = input("Rebounds> ")
     if REBOUNDS == "":
         REBOUNDS = 0
     elif REBOUNDS.isnumeric() is False:
         REBOUNDS = input("Please enter a number> ")
+    int(REBOUNDS)
     ASSISTS = input("Assists> ")
     if ASSISTS == "":
         ASSISTS = 0
     elif ASSISTS.isnumeric() is False:
         ASSISTS = input("Please enter a number> ")
+    int(ASSISTS)
     STEALS = input("Steals> ")
     if STEALS == "":
         STEALS = 0
     elif STEALS.isnumeric() is False:
         STEALS = input("Please enter a number> ")
+    int(STEALS)
     BLOCKS = input("Blocks> ")
     if BLOCKS == "":
         BLOCKS = 0
     elif BLOCKS.isnumeric() is False:
         BLOCKS = input("Please enter a number> ")
+    int(BLOCKS)
     TURNOVERS = input("Turnovers> ")
     if TURNOVERS == "":
         TURNOVERS = 0
     elif TURNOVERS.isnumeric() is False:
         TURNOVERS = input("Please enter a number> ")
+    int(TURNOVERS)
     FG_MADE = input("Field goals made> ")
     if FG_MADE == "":
         FG_MADE = 0
     elif FG_MADE.isnumeric() is False:
         FG_MADE = input("Please enter a number> ")
+    FG_MADE = int(FG_MADE)
     FG_ATTEMPTED = input("Field goals attempted> ")
-    if FG_ATTEMPTED == 0 or '""':
-        FG_PER = 0
+    if FG_ATTEMPTED == 0 or "":
+        FG_ATTEMPTED = 0
     elif FG_ATTEMPTED.isnumeric() is False:
         FG_ATTEMPTED = input("Please enter a number> ")
-    else:
+    FG_ATTEMPTED = int(FG_ATTEMPTED)
+    if FG_ATTEMPTED > 0:
         FG_PER = (FG_MADE / FG_ATTEMPTED) * 100
-    round(FG_PER, 1)
+        round(FG_PER, 1)
+    elif FG_ATTEMPTED == 0:
+        FG_PER = 0
     THREE_MADE = input("Threes made> ")
     if THREE_MADE == "":
         THREE_MADE = 0
     elif THREE_MADE.isnumeric() is False:
         THREE_MADE = input("Please enter a number> ")
+    THREE_MADE = int(THREE_MADE)
     THREE_ATTEMPTED = input("Threes attempted> ")
-    if THREE_ATTEMPTED == 0 or '""':
-        THREE_PER = 0
+    if THREE_ATTEMPTED == 0 or "":
+        THREE_ATTEMPTED = 0
     elif THREE_ATTEMPTED.isnumeric() is False:
         THREE_ATTEMPTED = input("Please enter a number> ")
-    else:
+    THREE_ATTEMPTED = int(THREE_ATTEMPTED)
+    if THREE_ATTEMPTED > 0:
         THREE_PER = (THREE_MADE / THREE_ATTEMPTED) * 100
-    round(THREE_PER, 1)
+        round(THREE_PER, 1)
+    elif THREE_ATTEMPTED == 0:
+        THREE_PER = 0
     FT_MADE = input("Free throws made> ")
     if FT_MADE == "":
         FT_MADE = 0
     elif FT_MADE.isnumeric() is False:
         FT_MADE = input("Please enter a number> ")
+    FT_MADE = int(FT_MADE)
     FT_ATTEMPTED = input("Free throws attempted> ")
-    if FT_ATTEMPTED == 0 or '""':
-        FT_PER = 0
+    if FT_ATTEMPTED == 0 or "":
+        FT_ATTEMPTED = 0
     elif FT_ATTEMPTED.isnumeric() is False:
         FT_ATTEMPTED = input("Please enter a number> ")
-    else:
+    FT_ATTEMPTED = int(FT_ATTEMPTED)
+    if FT_ATTEMPTED > 0:
         FT_PER = (FT_MADE / FT_ATTEMPTED) * 100
-    round(FT_PER, 1)
+        round(FT_PER, 1)
+    elif FT_ATTEMPTED == 0:
+        FT_PER = 0
     FOULS = input("Fouls> ")
     if FOULS == "":
         FOULS = 0
     elif FOULS.isnumeric() is False:
         FOULS = input("Please enter a number> ")
+    int(FOULS)
 
     NEW_GAME = [DATE, OPPONENT, MINUTES, POINTS, REBOUNDS, ASSISTS, STEALS, BLOCKS, TURNOVERS, FG_MADE, FG_ATTEMPTED,
                 FG_PER, THREE_MADE, THREE_ATTEMPTED, THREE_PER, FT_MADE, FT_ATTEMPTED, FT_PER, FOULS]
@@ -432,6 +450,42 @@ def updateAverage(NAME, AVG):
 
     CONNECTION.commit()
 
+def updateTeamAverage(NAME, AVG):
+    """
+    Updates the average row
+    :param NAME: str
+    :param AVG: list
+    :return:
+    """
+
+    global CURSOR, CONNECTION
+
+    CURSOR.execute(f"""
+        UPDATE
+            Lillian_Osborne_Basketball
+        SET 
+            avg_minutes = ?,
+            avg_points = ?,
+            avg_rebounds = ?,
+            avg_assists = ?,
+            avg_steals = ?,
+            avg_blocks = ?,
+            avg_turnovers = ?,
+            avg_fg_made = ?,
+            avg_fg_attempted = ?,
+            avg_fg_per = ?,
+            avg_three_point_made = ?,
+            avg_three_point_attempted = ?,
+            avg_three_point_per = ?,
+            avg_ft_made = ?,
+            avg_ft_attempted = ?,
+            avg_ft_per = ?,
+            avg_fouls = ?
+        WHERE
+            name = '{NAME}'
+    ;""", AVG)
+
+    CONNECTION.commit()
 
 def setupTeamTable():
     """
@@ -502,7 +556,7 @@ def addtoTeam(NAME):
                     avg_fouls
                 )
             VALUES (
-                {NAME}, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+                '{NAME}', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
             )
         ;""")
 
@@ -571,12 +625,6 @@ def displayPlayer(NAME):
               'FTM', 'FT_A', 'FT%', 'F']
 
     print(tabulate(TABLE, headers=HEADER))
-
-    # for row in TABLE:
-    # for col in row:
-    # print(col, end=" ")
-    # print(TABLE)
-
 
 def displayTeam():
     """
@@ -649,7 +697,7 @@ if __name__ == "__main__":
             NAME = getPlayerName()
             setupTable(NAME)
             addAverage(NAME)
-            #addtoTeam(NAME)
+            addtoTeam(NAME)
         elif CHOICE == 4:
             print("""
 1. Add new game
@@ -663,6 +711,7 @@ if __name__ == "__main__":
                 addNewRow(NAME)
                 AVG = getPlayerAverage(NAME)
                 updateAverage(NAME, AVG)
+                updateTeamAverage(NAME, AVG)
             elif SUBMENU == 2:
                 NAME = getPlayerID()
                 ROW = getRowID(NAME)
