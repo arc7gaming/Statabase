@@ -691,7 +691,6 @@ if __name__ == "__main__":
         elif CHOICE == 2:
             NAME = getPlayerID()
             displayPlayer(NAME)
-            getPlayerAverage(NAME)
         elif CHOICE == 3:
             displayList()
             NAME = getPlayerName()
