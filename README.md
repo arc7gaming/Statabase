@@ -1,4 +1,4 @@
-# IA-MasonFenna
+# Statabase
 
 ## Welcome to the statabase interactive platform!
 
